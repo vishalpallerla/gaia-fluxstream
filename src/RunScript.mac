@@ -1,0 +1,17 @@
+ROUTINE RunScript
+ #; Gaia FluxStream — parallel Python variability engine for Gaia DR3
+ #; Feedback: IRIS Embedded Python made the ObjectScript-to-Python handoff
+ #; concise.
+Run()
+{
+ Set startTime = $ZHOROLOG
+
+ Set count = ##class(FluxStream).Run(
+     "/home/irisowner/dev/data/in",
+     "/home/irisowner/dev/data/out/result.csv")
+
+ Set elapsed = $ZHOROLOG - startTime
+
+ Write "Qualifying sources: ",count,!
+ Write "Elapsed time: ",elapsed," seconds",!
+}

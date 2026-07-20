@@ -1,0 +1,16 @@
+    ; LoadDir only imports .cls files; our entry point is a .mac routine, so
+    ; load both explicitly into USER (session defaults here) before switching
+    ; to %SYS for the security setup below.
+    do $System.OBJ.Load("/home/irisowner/dev/src/FluxStream.cls","ck")
+    do $System.OBJ.Load("/home/irisowner/dev/src/RunScript.mac","ck")
+
+    ;disabling password expire for development purposes
+    zn "%SYS"
+    Do ##class(Security.Users).UnExpireUserPasswords("*")
+
+    ; enabling callin for Embedded Python
+    do ##class(Security.Services).Get("%Service_CallIn",.prop)
+    set prop("Enabled")=1
+    set prop("AutheEnabled")=48
+    do ##class(Security.Services).Modify("%Service_CallIn",.prop)
+    halt

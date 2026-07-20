@@ -1,0 +1,23 @@
+ARG IMAGE=intersystems/iris-community:latest-em
+FROM $IMAGE
+
+WORKDIR /home/irisowner/dev
+COPY . .
+
+## Embedded Python environment
+ENV IRISUSERNAME="_SYSTEM"
+ENV IRISPASSWORD="SYS"
+ENV IRISNAMESPACE="USER"
+ENV PYTHON_PATH=/usr/irissys/bin/
+ENV PATH="/usr/irissys/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/irisowner/bin"
+ENV PYTHONPATH=/home/irisowner/dev/src
+
+# ISA-L (igzip): drop-in gzip decompressor backed by Intel ISA-L.
+RUN pip3 install --no-cache-dir --no-index --find-links=/home/irisowner/dev/vendor \
+    --target /usr/irissys/mgr/python isal==1.8.0
+
+RUN --mount=type=bind,src=.,dst=. \
+    iris start IRIS && \
+    iris merge IRIS merge.cpf && \
+    iris session IRIS < iris.script && \
+    iris stop IRIS quietly safely
