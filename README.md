@@ -155,6 +155,21 @@ The 20 files are independent, so each goes to its own worker via
 - **Strict `> 100`**, not `>= 100`.
 - Zero and non-finite minima are treated as undefined (no percentage).
 
+## Runtime input location
+
+The official 20 compressed benchmark files are committed unchanged under
+`data/in` and copied into the Docker image by the Dockerfile (`COPY . .`) in the template already.
+
+At runtime, **only `data/out` is bind-mounted** to the host (see
+`docker-compose.yml`).
+
+**No preprocessing occurs during image construction.** Every invocation of `do ^RunScript` opens all 20 original `.csv.gz` files from the image,
+decompresses them, performs the required calculations, and writes
+`data/out/result.csv` entirely within the timed execution. Nothing is
+decompressed, transformed, cached, or precomputed at build time.
+
+The previously reviewed full-project bind-mount configuration is preserved as git tag `v1.0-bind-mount` for easy comparison or reversion.
+
 ## Verify correctness
 
 The engine's output is diffed (order-independent) against the reference oracle:
@@ -173,8 +188,7 @@ print('Match:', load('/home/irisowner/dev/data/out/result.csv') == load('/home/i
 
 ## Performance
 
-Decompression is ~82% of the runtime, so wall-clock scales with the number of
-CPU cores the container is given. The engine auto-detects and uses whatever cores are available. 
+Scales with the number of CPU cores the container is given. The engine auto-detects and uses whatever cores are available. 
 
 ## Dependencies
 

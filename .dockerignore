@@ -1,0 +1,7 @@
+**/.DS_Store
+.git
+.env
+iris-main.log
+data/out/*.csv
+**/__pycache__/
+docker-compose.override.yml

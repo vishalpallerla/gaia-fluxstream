@@ -11,4 +11,6 @@ services:
       - "52780:52773"
       - "53780:53773"
     volumes:
-      - ./:/home/irisowner/dev
+      # Only the output directory is bind-mounted. Nothing is
+      # precomputed — see README "Runtime input location".
+      - ./data/out:/home/irisowner/dev/data/out
